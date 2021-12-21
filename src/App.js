@@ -79,10 +79,14 @@ function App() {
 	async function handleSubmit() {
 		try {
 			const res = await fetch('https://localhost:60001/Contractor/Save', { method: 'POST' });
+			//hide loading 
 			setshowLoading(false);
+			//hide error message
 			setshowError(false);
 		} catch (error) {
+			//hide loading
 			setshowLoading(false);
+			//show error message
 			setshowError(true);
 		}
 	}
@@ -99,10 +103,13 @@ function App() {
 			if (data.NI.length !== 11) {
 				seterrors((prevState) => ({ ...prevState, NI: true }));
 			} else {
+				// get array of decimals
 				const numbers = [...data.NI];
 				let sum = 0;
 				numbers.forEach((value, index) => {
+					//convert back to int
 					value = parseInt(value);
+					//check if index+1 is in array 
 					if ([1, 5, 9].includes(index + 1)) {
 						sum += 1 * value;
 					} else if ([2, 6, 10].includes(index + 1)) {
@@ -114,16 +121,20 @@ function App() {
 					}
 				});
 				let lastNumber = [...toString(sum)][toString(sum).length - 1];
+				// if controll passed (last decimal - 10 should give last decimal of PESEL)
 				parseInt(lastNumber) - 10 != numbers[numbers.length] ? seterrors((prevState) => ({ ...prevState, NI: false })) : seterrors((prevState) => ({ ...prevState, NI: true }));
 			}
 		} else if (data.type == 'Firma') {
 			if (data.NI.length !== 10) {
 				seterrors((prevState) => ({ ...prevState, NI: true }));
 			} else {
+				// get array of decimals
 				const numbers = [...data.NI];
 				let sum = 0;
 				numbers.forEach((value, index) => {
+					//convert back to int
 					value = parseInt(value);
+					//check if index+1 is in array 
 					if ([1, 8].includes(index + 1)) {
 						sum += 6 * value;
 					} else if ([2, 7].includes(index + 1)) {
@@ -139,13 +150,14 @@ function App() {
 					}
 				});
 				let lastNumber = numbers[numbers.length - 1];
+				// if controll passed (sum mod 11 should give last decimal of NIP)
 				parseInt(lastNumber) != sum % 11 ? seterrors((prevState) => ({ ...prevState, NI: true })) : seterrors((prevState) => ({ ...prevState, NI: false }));
 			}
 		}
 		setvalidationDone(true);
 		return;
 	}
-	console.log(errors);
+
 
 	return (
 		<div className='w-screen h-screen flex flex-col justify-center items-center'>
@@ -154,7 +166,7 @@ function App() {
 				onSubmit={(e) => {
 					validateData(e);
 				}}
-				/*action='http://localhost:60001/Contactor/Save' method='POST'*/ className='w-full h-auto max-w-sm border-solid border-gray-300/20 border-2 rounded-md shadow-md accent-violet-600'>
+				className='w-full h-auto max-w-sm border-solid border-gray-300/20 border-2 rounded-md shadow-md accent-violet-600'>
 				<FormGroup>
 					{/* Name input */}
 					<Label props={{ text: 'Imię:', flex: 'flex-col', required: true }}>
